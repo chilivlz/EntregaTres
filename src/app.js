@@ -8,7 +8,7 @@ const productManager = new ProductManager("./src/products.json");
 
 app.get("/products", async (req, res) => {
   const allProducts = await productManager.getProducts();
-  let limit = req.query.limit; // Mover aquí la declaración de 'limit'
+  let limit = req.query.limit; 
 
   if (!limit) {
     res.status(200).send({ status: "success", data: allProducts });
