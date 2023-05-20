@@ -6,6 +6,8 @@
       "thumbnail": "Sin imagen",
       "code": "abc123",
       "stock": "25",
+      "status": "true",
+      "category":"bol",
       "id": "1"
     },
     {
@@ -15,6 +17,8 @@
       "thumbnail": "Sin imagen",
       "code": "abc124",
       "stock": "25",
+      "status": "true",
+      "category":"bol",
       "id": "2"
     },
     {
@@ -24,6 +28,8 @@
       "thumbnail": "Sin imagen",
       "code": "abc125",
       "stock": "25",
+      "status": "true",
+      "category":"bol",
       "id": "3"
     },
     {
@@ -33,6 +39,8 @@
       "thumbnail": "Sin imagen",
       "code": "abc126",
       "stock": "25",
+      "status": "true",
+      "category":"bol",
       "id": "4"
     },
     {
@@ -42,6 +50,8 @@
       "thumbnail": "Sin imagen",
       "code": "abc127",
       "stock": "25",
+      "status": "true",
+      "category":"bol",
       "id": "5"
     },
     {
@@ -51,6 +61,8 @@
       "thumbnail": "Sin imagen",
       "code": "abc128",
       "stock": "25",
+      "status": "true",
+      "category":"bol",
       "id": "6"
     },
     {
@@ -60,6 +72,8 @@
       "thumbnail": "Sin imagen",
       "code": "abc129",
       "stock": "25",
+      "status": "true",
+      "category":"bol",
       "id": "7"
     },
     {
@@ -69,6 +83,8 @@
       "thumbnail": "Sin imagen",
       "code": "abc130",
       "stock": "25",
+      "status": "true",
+      "category":"bol",
       "id": "8"
     },
     {
@@ -78,6 +94,8 @@
       "thumbnail": "Sin imagen",
       "code": "abc131",
       "stock": "25",
+      "status": "true",
+      "category":"bol",
       "id": "9"
     },
     {
@@ -87,6 +105,8 @@
       "thumbnail": "Sin imagen",
       "code": "abc132",
       "stock": "25",
+      "status": "true",
+      "category":"bol",
       "id": "10"
     }
   ]
