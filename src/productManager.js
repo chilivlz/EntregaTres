@@ -5,7 +5,7 @@ import fs from "fs";
 
 export class ProductManager {
     constructor(path) {
-      this.path = "path";
+      this.path = "./src/products.json";
       this.products = [];
       this.id = 0;
       fs.existsSync(this.path) === false ? fs.writeFile(this.path, JSON.stringify(this.products), (err) => {
@@ -66,7 +66,8 @@ export class ProductManager {
 
   async getProductById(id) {
     const fileProducts = await fs.promises.readFile(this.path, "utf-8");
-    const fileProductsParse = JSON.parse(fileProducts);
+    const fileProductsParse = 
+    JSON.parse(fileProducts);
     const findProd = fileProductsParse.find((prod) => prod.id == id);
 
     if (findProd) {
@@ -96,7 +97,7 @@ export class ProductManager {
     const fileProductsParse = JSON.parse(fileProducts);
 
     const positionProduct = fileProductsParse.findIndex(
-      (prod) => prod.id == id
+     (prod) => prod.id == id
     );
 
     if (positionProduct == -1) {

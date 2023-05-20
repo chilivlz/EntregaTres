@@ -2,7 +2,7 @@ import { Router } from "express";
 import express from "express";
 import { ProductManager } from "../productManager.js";
 
-const productManager = new ProductManager("..routes/src/products.json");
+const productManager = new ProductManager();
 
 export const productManagerRouter = Router();
 
@@ -29,41 +29,54 @@ productManagerRouter.get("/", async (req, res) => {
   }); //limit//
 
 
-  productManagerRouter.get("/", async (req, res) => {
-
-
-    const allProducts = await productManager.getProducts();
-    let productId = req.params.pid;
-    let productFound = allProducts.find((product) => product.id === productId);
-    if (!productFound) {
-      return res
-        .status(404)
-        .send({ status: "error", data: "Product ID not found", msg: IdnotFound});
+  productManagerRouter.get('/:pid', async (req, res) => {
+    try {
+        const { pid } = req.params;
+        const found = await productManager.getProductById(pid);
+        if(found != undefined) {
+            return res.status(200).json({status: 'success', data: found});
+        } else {
+            return res.status(400).json({status: 'Not found', data: {}});
+        }
+    } catch (error) {
+        return res.status(400).send({status: 'error', data: error.message});   
     }
-     res.status(200).send({ status: "success", data: productFound });
-      
+});
+
+  productManagerRouter.put("/:pid", async (req, res) => {
+    try {
+      const { pid } = req.params;
+      const { title, category, description, price, thumbnail, code, stock, status } = req.body;
+      const updateProduct = await productManager.updateProduct(pid, title, category, description, price, thumbnail, code, stock, status);
+      res.status(200).json({ status: "success", data: updateProduct });
+    } catch (error) {
+      res.status(400).send({ status: "error", data: error.message });
+    }
   });
 
-  productManagerRouter.get("/:id", async (req,res)=>{
- try { 
+  productManagerRouter.delete("/:pid", async (req, res) => {
+    try {
+      const { pid } = req.params;
+      productManager.deleteProduct(pid);
+      return res.status(200).send("Deleted product successfully");
+    } catch (error) {
+        res.status(400).send({ status: "error", data: error.message });
+    }
+  });
 
-  const id = req.params.id;
-  const productsId = productsId.find((p) => p.id == id);
+productManagerRouter.post("/", async (req, res) => {
+    const  product  = req.body;
   
-  const response =  await productsId
-      ? { status: "succes", msg:" product found",data: productsId}
-       : { status : "error", msg: "product NOT found", data: {}}
-       res.status( productsId ? 200 : 404 ). json (response);
-
- } catch (error) {
-    res.status(500).json({
-        status: "error",
-        msg: "Internal server error",
-        data: {},
+    try {
+        productManager.addProduct(product);
+      res.status(200).json({ status: "success55", data: product });
+    } catch (error) {
+      res.status(400).send({ status: "error", data: error.message});
+    }
+  });
 
 
- });
-   }});
+
   
 
  
