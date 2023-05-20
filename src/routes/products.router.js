@@ -18,7 +18,7 @@ productManagerRouter.get("/", async (req, res) => {
       res.status(200).send({ status: "success", data: allProducts });
     } else if (limit > 0 && limit <= allProducts.length) {
       let productsLimit = allProducts.slice(0, limit);
-      res.status(200).send({ status: "success", data: productsLimit, msg:products });
+      res.status(200).send({ status: "success", data: productsLimit });
     } else if (limit > allProducts.length) {
       res
         .status(400)
@@ -66,10 +66,14 @@ productManagerRouter.get("/", async (req, res) => {
 
 productManagerRouter.post("/", async (req, res) => {
     const  product  = req.body;
-  
-    try {
-        productManager.addProduct(product);
-      res.status(200).json({ status: "success55", data: product });
+    const { title, category, description, price,thumbnail,code, stock, status } = product
+    console.log(title, category, description,price,thumbnail, code , stock, status )
+    console.log(product) 
+
+
+   try {
+      productManager.addProduct( title, category, description,price,thumbnail, code , stock, status);
+      return res.status(200).json({ status: "success55", data: product });
     } catch (error) {
       res.status(400).send({ status: "error", data: error.message});
     }

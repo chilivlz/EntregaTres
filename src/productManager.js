@@ -13,7 +13,7 @@ export class ProductManager {
         : console.log("Iniciando servidor");
     }
 
-  async addProduct(title, description, price, thumbnail, code, stock) {
+  async addProduct(title, description, price, thumbnail, code, stock, status) {
     const file = await fs.promises.readFile(this.path, "utf-8");
     const products = JSON.parse(file);
     this.products = products;
@@ -24,20 +24,23 @@ export class ProductManager {
       console.log("Error code, existing code");
     } else {
       this.id++;
-      title = title || "no value entered";
-      description = description || "no value entered";
-      price = price || "no value entered";
-      thumbnail = thumbnail || "no value entered";
-      code = code || "no value entered";
-      stock = stock || "no value entered";
+      this.title = title || "no title entered";
+      this.description = description || "no description entered";
+      this.price = price || "no price entered";
+      this.thumbnail = thumbnail || "no thumbnail entered";
+      this.code = code || "no code entered";
+      this.stock = stock || "no stock entered";
+      this.status = status || "no status entered";
+      
 
       if (
-        title == "no value entered" ||
-        description == "no value entered" ||
-        price == "no value entered" ||
-        thumbnail == "no value entered" ||
-        code == "no value entered" ||
-        stock == "no value entered"
+        title == "no title entered" ||
+        description == "no title entered" ||
+        price == "no title entered" ||
+        thumbnail == "no title entered" ||
+        code == "no title entered" ||
+        stock == "no title entered" ||
+        status == "no title entered"
       ) {
         console.log("Error: there are unfilled fields");
       } else {
@@ -49,6 +52,7 @@ export class ProductManager {
           thumbnail,
           code,
           stock,
+          status,
         };
 
         this.products.push(product);
@@ -71,7 +75,8 @@ export class ProductManager {
     const findProd = fileProductsParse.find((prod) => prod.id == id);
 
     if (findProd) {
-      return console.log(findProd);
+      console.log(findProd);
+      return findProd
     } else {
       console.log("product not found");
     }

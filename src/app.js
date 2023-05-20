@@ -2,6 +2,7 @@
 import express from "express";
 import { ProductManager } from "./productManager.js";
 import { productManagerRouter } from "./routes/products.router.js";
+import { cartsRouter } from "./routes/carts.router.js";
 
 
 const app = express();
@@ -10,7 +11,7 @@ app.use(express.urlencoded({ extended: true }));
 export const productManager = new ProductManager('./products.json');
 
 app.use("/api/products", productManagerRouter);
-
+app.use("/api/carts", cartsRouter);
 
 
 
