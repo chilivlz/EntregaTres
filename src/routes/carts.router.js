@@ -1,8 +1,7 @@
 import { Router } from "express";
 import express from "express";
-import { CartManager } from "../cartManager.js";
+import { cartManager, CartManager } from "../cartManager.js";
 
-const cartManager = new CartManager();
 
 export const cartsRouter = Router();
 
@@ -16,22 +15,15 @@ cartsRouter.post("/", async (req, res) => {
 });
 
 cartsRouter.get("/:cid", async (req, res) => {
-  try {
-    const cartId = await cartManager.getCartId(Number(req.params.cid));
-    res.status(200).send({ status: "success", data: cartId });
-  } catch (error) {
-    res.status(404).send({ status: "error", error: error.message });
-  }
+  const cartId = req.params.cid
+  const cartFound = await cartManager.getCartById(cartId)
+  console.log(cartFound);
+  res.send(cartFound)
 });
 
 cartsRouter.post("/:cid/product/:pid", async (req, res) => {
-  try {
-    const cartId = await cartManager.addProductToCart(
-      Number(req.params.cid),
-      Number(req.params.pid)
-    );
-    res.status(200).send({ status: "success", data: cartId });
-  } catch (error) {
-    res.status(404).send({ status: "error", error: error.message });
-  }
+  const cartId = req.params.cid
+  const productId = req.params.pid
+  cartManager.addProductToCart(cartId,productId)
+  res.send("se agrego el producto")
 });
