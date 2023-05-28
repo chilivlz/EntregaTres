@@ -1,6 +1,7 @@
 import { Router } from "express";
 import express from "express";
 import { ProductManager } from "../productManager.js";
+import { io } from "../app.js";
 
 const productManager = new ProductManager();
 
@@ -36,7 +37,7 @@ productManagerRouter.get("/", async (req, res) => {
         if(found != undefined) {
             return res.status(200).json({status: 'success', data: found});
         } else {
-            return res.status(400).json({status: 'Not found', data: {}});
+            return res.status(400).json( {status: 'Not found', data: {}});
         }
     } catch (error) {
         return res.status(400).send({status: 'error', data: error.message});   
@@ -58,6 +59,7 @@ productManagerRouter.get("/", async (req, res) => {
     try {
       const { pid } = req.params;
       productManager.deleteProduct(pid);
+      io.emit('realTime',allProducts);
       return res.status(200).send("Deleted product successfully");
     } catch (error) {
         res.status(400).send({ status: "error", data: error.message });
@@ -73,7 +75,9 @@ productManagerRouter.post("/", async (req, res) => {
 
    try {
       productManager.addProduct( title, category, description,price,thumbnail, code , stock, status);
+      io.emit('realTime',allProducts);
       return res.status(200).json({ status: "success55", data: product });
+      
     } catch (error) {
       res.status(400).send({ status: "error", data: error.message});
     }

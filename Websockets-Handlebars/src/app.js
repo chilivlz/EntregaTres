@@ -21,8 +21,7 @@ app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 app.use(morgan('dev'));
 
-
-app.engine("hanlebars", handlesbars.engine());
+app.engine("handlebars", handlesbars.engine());
 app.set("views", __dirname + "/views");
 app.set("view engine", "handlebars");
 
