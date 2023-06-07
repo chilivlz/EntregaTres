@@ -72,7 +72,10 @@ productManagerRouter.post("/", async (req, res) => {
 
 
    try {
-      productManager.addProduct( title, category, description,price,thumbnail, code , stock, status);
+      const  producto = await productManager.addProduct( title, category, description,price,thumbnail, code , stock, status);
+      if(producto === 409){
+        returnres.status(409).send("Error code, existing code")
+      }
       return res.status(200).json({ status: "success55", data: product });
     } catch (error) {
       res.status(400).send({ status: "error", data: error.message});

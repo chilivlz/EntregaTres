@@ -13,10 +13,18 @@ export class ProductManager {
         : console.log("Iniciando servidor");
     }
 
-  async addProduct(title, description, price, thumbnail, code, stock, status) {
+  async addProduct(title,category, description, price, thumbnail, code, stock, status) {
     const file = await fs.promises.readFile(this.path, "utf-8");
     const products = JSON.parse(file);
     this.products = products;
+
+    if (products.length > 0){
+      const lastProduct = products[products.length - 1];
+      this.id = lastProduct.id +1;
+    } else{
+      this.id = 1;
+    }
+    
 
     const codeError = this.products.find((prod) => prod.code == code);
 
@@ -25,6 +33,7 @@ export class ProductManager {
     } else {
       this.id++;
       this.title = title || "no title entered";
+      this.category = category || "no category entered"
       this.description = description || "no description entered";
       this.price = price || "no price entered";
       this.thumbnail = thumbnail || "no thumbnail entered";
@@ -35,6 +44,7 @@ export class ProductManager {
 
       if (
         title == "no title entered" ||
+        category == "no category entered"||
         description == "no title entered" ||
         price == "no title entered" ||
         thumbnail == "no title entered" ||
@@ -47,6 +57,7 @@ export class ProductManager {
         const product = {
           id: this.id,
           title,
+          category,
           description,
           price,
           thumbnail,
@@ -82,16 +93,27 @@ export class ProductManager {
     }
   }
 
-  async updateProduct(id, prop, newValor) {
+  async updateProduct(id, title, category, description, price, thumbnail, code,  stock, status) {
     const fileProducts = await fs.promises.readFile(this.path, "utf-8");
     const fileProductsParse = JSON.parse(fileProducts);
 
     const findProd = fileProductsParse.find((prod) => prod.id == id);
+    const codeExist= fileProductsParse.find((prod) => prod.code == code && prod.id !== id);
+
+    if(codeExist){
+      return 409
+    }
 
     if (findProd == undefined) {
       console.log("product not found");
     } else {
-      findProd[prop] = newValor;
+      findProd['title'] = title?title:findProd['title'];
+      findProd['category'] = category?category:findProd['category'];
+      findProd['description'] = description?description:findProd['description'];
+      findProd['price'] = price?price:findProd['price'];
+      findProd['thumbnail'] = thumbnail?thumbnail:findProd['thumbnail'];
+      findProd['code'] = code?code:findProd['code'];
+      findProd['status'] = status?status:findProd['status'];
       const productsString = JSON.stringify(fileProductsParse);
       await fs.promises.writeFile(this.path, productsString);
     }
@@ -108,7 +130,7 @@ export class ProductManager {
     if (positionProduct == -1) {
       console.log("product not found");
     } else {
-      delete fileProductsParse[positionProduct];
+      delete fileProductsParse[positionProduct, 1];
       const productsDelete = fileProductsParse.filter(
         (prod) => prod !== undefined
       );
