@@ -80,7 +80,7 @@ routerUser.delete('/:id', async (req, res) => {
     console.log(e);
     return res.status(500).json({
       status: 'error',
-      msg: 'something went wrong :(',
+      msg: 'something went wrong :( please try again',
       data: {},
     });
   }
