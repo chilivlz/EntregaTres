@@ -30,6 +30,7 @@ export class ProductManager {
 
     if (codeError) {
       console.log("Error code, existing code");
+      return 409
     } else {
       this.id++;
       this.title = title || "no title entered";
@@ -53,6 +54,7 @@ export class ProductManager {
         status == "no title entered"
       ) {
         console.log("Error: there are unfilled fields");
+        return 401
       } else {
         const product = {
           id: this.id,
@@ -129,14 +131,17 @@ export class ProductManager {
 
     if (positionProduct == -1) {
       console.log("product not found");
+      return "product not found"
     } else {
       delete fileProductsParse[positionProduct, 1];
       const productsDelete = fileProductsParse.filter(
         (prod) => prod !== undefined
       );
+       console.log({productsDelete})
 
       const productsString = JSON.stringify(productsDelete);
       await fs.promises.writeFile(this.path, productsString);
+      return "Delete product sucessfully"
     }
   }
 };

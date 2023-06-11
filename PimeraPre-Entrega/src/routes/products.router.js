@@ -74,8 +74,11 @@ productManagerRouter.post("/", async (req, res) => {
    try {
       const  producto = await productManager.addProduct( title, category, description,price,thumbnail, code , stock, status);
       if(producto === 409){
-        returnres.status(409).send("Error code, existing code")
+        return res.status(409).send("Error code, existing code")
       }
+      if(producto === 401){ 
+        return res.status(401).send("Error: there are unfilled fields")
+       }
       return res.status(200).json({ status: "success55", data: product });
     } catch (error) {
       res.status(400).send({ status: "error", data: error.message});
