@@ -1,101 +1,75 @@
+// @ts-check
 import { Router } from "express";
 import express from "express";
-import { ProductManager } from "../productManager.js";
-import { io } from "../app.js";
-
-const productManager = new ProductManager();
+import { ProductManagerMongo } from "../DAO/services/products.service.js";
 
 export const productManagerRouter = Router();
+
+const productManagerMongo = new ProductManagerMongo(); 
 
 productManagerRouter.use(express.json());
 productManagerRouter.use(express.urlencoded({ extended: true }));
 
-//  limit//
 productManagerRouter.get("/", async (req, res) => {
-    const allProducts = await productManager.getProducts();
-    let limit = req.query.limit; 
-  
-    if (!limit) {
-      return res.status(200).send({ status: "success", data: allProducts });
-    } else if (limit > 0 && limit <= allProducts.length) {
-      let productsLimit = allProducts.slice(0, limit);
-      return res.status(200).send({ status: "success", data: productsLimit });
-    } else if (limit > allProducts.length) {
-     return  res .status(400).send({ status: "error", data: "Limit exceeds the products quantity" });
-    } else {
-      return res.status(400).send({ status: "error", data: "Limit must be a number", msg: productslimit });
-    }
-  }); //limit//
+  try {
+    const allProducts = await productManagerMongo.getProducts();
 
-
-  productManagerRouter.get('/:pid', async (req, res) => {
-    try {
-        const { pid } = req.params;
-        const found = await productManager.getProductById(pid);
-        if(found != undefined) {
-            return res.status(200).json({status: 'success', data: found});
-        } else {
-            return res.status(400).json( {status: 'Not found', data: {}});
-        }
-    } catch (error) {
-        return res.status(400).send({status: 'error', data: error.message});   
-    }
+    res.status(200).send({ status: "success", data: allProducts });
+  } catch (error) {
+    res.status(400).send({ status: "error", error: error.message });
+  }
 });
 
-  productManagerRouter.put("/:pid", async (req, res) => {
-    try {
-      const { pid } = req.params;
-      const { title, category, description, price, thumbnail, code, stock, status } = req.body;
-      const updateProduct = await productManager.updateProduct(pid, title, category, description, price, thumbnail, code, stock, status);
-     return res.status(200).json({ status: "success", data: updateProduct });
-    } catch (error) {
-       return res.status(400).send({ status: "error", data: error.message });
-    }
-  });
+productManagerRouter.get("/:pid", async (req, res) => {
+  try {
+    let pid = req.params.pid;
+    const findProduct = await productManagerMongo.getProductById(pid);
+   res.status(200).send({ status: "success", data: findProduct });
+  } catch (error) {
+    res.status(400).send({ status: "error", data: error.message });
+  }
+});
 
-  productManagerRouter.delete("/:pid", async (req, res) => {
-    try {
-      const { pid } = req.params;
-      const resultado= await productManager.deleteProduct(pid);
-      io.emit('realTime',allProducts);
-      return res.status(200).send(resultado);
-    } catch (error) {
-       return res.status(400).send({ status: "error", data: error.message });
-    }
-  });
+productManagerRouter.put("/:pid", async (req, res) => {
+  let updateProductClient = req.body;
+  let pid = req.params.pid;
+  try {
+    const updateProduct = await productManagerMongo.updateProduct(
+      pid,
+      updateProductClient
+    );
+   res.status(200).send({ status: "success", data: updateProduct });
+  } catch (error) {
+     res.status(400).send({ status: "error", data: error.message });
+  }
+});
 
-  productManagerRouter.post("/", async (req, res) => {
-    const  product  = req.body;
-    const { title, category, description, price,thumbnail,code, stock, status } = product
-    console.log(title, category, description,price,thumbnail, code , stock, status )
-    console.log(product) 
+productManagerRouter.post("/", async (req, res) => {
+  let newProduct = req.body;
+  try {
+    const addProduct = await productManagerMongo.addProduct(newProduct);
+     res.status(201).send({ status: "success", data: addProduct });
+  } catch (error) {
+      res.status(400).send({
+      status: "error",
+      data: error.message,
+    });
+  }
+});
 
+productManagerRouter.delete("/:pid", async (req, res) => {
+  let pid = req.params.pid;
+  console.log(pid);
 
-   try {
-     const producto = await productManager.addProduct( title, category, description,price,thumbnail, code , stock, status);
-     if(producto === 409){
-      return res.status(409).send("Error code, existing code")
-    }
-    if(producto === 401){ 
-      io.emit('realTime',allProducts);
-      return res.status(200).json({ status: "success55", data: product });
-    }
-    } catch (error) {
-     return  res.status(400).send({ status: "error", data: error.message});
-    }
-  });
-
-
-
-  
-
- 
-
-
-   
-
-  
-
-
+  try {
+    const deleteProduct = await productManagerMongo.deleteProduct(pid);
+    return res.status(200).send({
+      status: "success",
+      data: "El producto eliminado es:" + deleteProduct,
+    });
+  } catch (error) {
+    return res.status(400).send({ status: "error", data: error.message });
+  }
+});
 
 

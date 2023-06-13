@@ -1,12 +1,24 @@
 import { Router } from "express";
 import express from "express";
-import { cartManager, CartManager } from "../cartManager.js";
+import { CartManagerMongo } from "../DAO/services/carts.service.js";
 
 
 export const cartsRouter = Router();
 
+const cartsManagerMongo = new CartManagerMongo();
+
+
 cartsRouter.use(express.json());
 cartsRouter.use(express.urlencoded({ extended: true }));
+
+cartsRouter.post("/", async (req, res) => {
+  try {
+    const userCart = await cartsManagerMongo.createCart();
+    res.status(201).send({ status: "success", data: userCart });
+  } catch (error) {
+    res.status(400).send({ status: "error", error: "Cart not created" });
+  }
+});
 
 cartsRouter.post("/", async (req, res) => {
   const userCart = await cartManager.createCart();

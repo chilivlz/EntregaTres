@@ -4,48 +4,76 @@
 //Arreglar esto//
 
 import express from 'express';
-import { UserModel } from '../models/users.model.js';
+import { Router } from 'express';
+import { UserModel } from '../DAO/models/users.model.js';
+
+export const usersRouter = Router();
+
+usersRouter.use(express.json());
+usersRouter.use(express.urlencoded({ extended: true}));
+
 export const routerUser = express.Router();
 
-routerUser.get('/', async (req, res) => {
+usersRouter.get('/', async (req, res) => {
   try {
     const users = await UserModel.find({});
-    return res.status(200).json({
-      status: 'success',
-      msg: 'listado de usuarios',
-      data: users,
-    });
-  } catch (e) {
-    console.log(e);
-    return res.status(500).json({
-      status: 'error',
-      msg: 'something went wrong :(',
-      data: {},
-    });
+    res.send({ result: "success", payload: users});
+  } catch (error) {
+   res.send({ result: "cannot get users with mongose"});
   }
 });
 
-routerUser.post('/', async (req, res) => {
-  try {
-    const { firstName, lastName, email } = req.body;
-    const userCreated = await UserModel.createUser(firstName, lastName, email);
+usersRouter.post('/', async (req, res) => {
+  let { first_name, last_name , email} = req.body;
+ 
+  if (!first_name || !last_name || !email){
+   res.send({ 
+    status: "error",
+    error: "cannot create with missing fields",
+   });
+ }
 
-    return res.status(201).json({
-      status: 'success',
-      msg: 'user created',
-      data: userCreated,
-    });
-  } catch (e) {
-    console.log(e);
-    return res.status(500).json({
-      status: 'error',
-      msg: 'something went wrong :(',
-      data: {},
-    });
-  }
-});
+ let result = await UserModel.create({ first_name, last_name, email });
 
-routerUser.put('/:id', async (req, res) => {
+ res.send({ status: "success", payload: result });
+
+ 
+ });
+usersRouter.put ("/:uid", async (req, res)=> {
+  const { uid }= req.params;
+  let userToReplace =req.body;
+    if (
+      !userToReplace.first_name ||
+      !userToReplace.last_name ||
+      !userToReplace.email
+    ){
+      res.send({
+        status:"error",
+        error :"cannot update user with missing fields",
+      })
+    }
+
+    let result = await UserModel.updateOne({ _id: uid }, userToReplace);
+    res.send({status: "success", payload: result});
+   });
+  
+ 
+   
+
+   usersRouter.delete("/:uid", async (req, res)=> {
+  
+      let  { uid } = req.params;
+      let result = await UserModel.deleteOne({ _id: uid});
+      res.send ({ status: "success, payload: result"});
+     });
+      
+    
+
+    
+  
+
+
+/*routerUser.put('/:id', async (req, res) => {
   try {
     const { id } = req.params;
     const { firstName, lastName, email } = req.body;
@@ -83,5 +111,4 @@ routerUser.delete('/:id', async (req, res) => {
       msg: 'something went wrong :( please try again',
       data: {},
     });
-  }
-});
+  }*/
