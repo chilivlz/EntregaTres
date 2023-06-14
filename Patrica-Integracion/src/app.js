@@ -11,10 +11,12 @@ import { MsgModel } from "./DAO/models/msgs.model.js";
 import __dirname from "./utils.js"
 import http from 'http'
 import morgan from "morgan"
-import { routerUser } from "./routes/users.router.js";
+import { usersRouter } from "./routes/users.router.js";
+import { connectMongo } from "./utils.js";
 const app = express();
 const port = 8080;
 
+connectMongo();
 
 const server = http.createServer(app);
 export const io = new Server (server);
