@@ -1,27 +1,83 @@
 import express from "express";
 import {Router} from "express";
-
-import{ io } from "../app.js"
-
-
 import { ProductManagerMongo } from "../DAO/services/products.service.js";
 
 const productManagerMongo = new ProductManagerMongo ('./products.json'); 
 export const routerRealTime = Router();
+
+const app = express();
+app.use(express.static("public"));
 
 routerRealTime.use(express.json());
 routerRealTime.use(express.urlencoded({ extended: true }));
 
 
 routerRealTime.get("/", async (req, res) => {
-    let allProducts = await productManagerMongo.getProducts();
-      return res.status(200).json({
-        status: "succesfull ",
-        msg: "all products",
-        data: allProducts
-      })
+  const allProducts = await productManagerMongo.getProducts(req.query.limit, req.query.page, req.query.sort, req.query.query);
 
+  const products = allProducts.docs.map((product) => ({
+    name: product.title,
+    description: product.description,
+    price: product.price,
+  }));
+
+  return res.status(200).json({
+    style: "./public/css/styles.css",
+    products: products,
   });
+});
+
+
+routerRealTime.get("/products", async (req, res) => {
+  const allProducts = await productManagerMongo.getProducts(req.query.limit, req.query.page, req.query.sort, req.query.query);
+  
+  const products = allProducts.docs.map((product) => ({
+    name: product.title,
+    description: product.description,
+    price: product.price,
+    _id: product._id,
+  }));
+
+  res.status(200).json({
+    products: {
+      style: "../css/styles.css",
+      products: products,
+    },
+    pagingCounter: allProducts.pagingCounter,
+    page: allProducts.page,
+    totalPages: allProducts.totalPages,
+    hasPrevPage: allProducts.hasPrevPage,
+    hasNextPage: allProducts.hasNextPage,
+    prevPage: allProducts.prevPage,
+    nextPage: allProducts.nextPage,
+  });
+});
+
+
+routerRealTime.get("/productDetail/:pid", async (req, res) => {
+  let pId = req.params.pid;
+  const product = await productManagerMongo.getProductById(pId);
+
+  if (product) {
+    return res.status(200).json({
+      style: "css/styles.css",
+      product: {
+        name: product.title,
+        description: product.description,
+        price: product.price,
+        category: product.category,
+        stock: product.stock,
+      },
+    });
+  } else {
+    return res.status(404).json({
+      status: "error",
+      data: "Product not found",
+    });
+  }
+}); /// hay que arreglar esto de resto todo sirve/// 
+
+
   
   routerRealTime.get("/realtimeproducts", async (req, res) => {
     res.render("realTimeProducts", {});

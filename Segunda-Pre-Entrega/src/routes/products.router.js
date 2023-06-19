@@ -1,6 +1,7 @@
 // @ts-nocheck
 import { Router } from "express";
 import express from 'express'
+import { productsModel } from "../DAO/models/products.model.js";
 import { ProductManagerMongo } from "../DAO/services/products.service.js";
 
 export const productManagerRouter = Router();
