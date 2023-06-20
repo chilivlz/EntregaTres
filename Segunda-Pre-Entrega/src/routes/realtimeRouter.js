@@ -1,8 +1,11 @@
 import express from "express";
 import {Router} from "express";
 import { ProductManagerMongo } from "../DAO/services/products.service.js";
+import { CartManagerMongo } from "../DAO/services/carts.service.js";
 
-const productManagerMongo = new ProductManagerMongo ('./products.json'); 
+const productManagerMongo = new ProductManagerMongo ();
+const cartManagerMongo = new CartManagerMongo(); 
+
 export const routerRealTime = Router();
 
 const app = express();
@@ -75,7 +78,36 @@ routerRealTime.get("/productDetail/:pid", async (req, res) => {
       data: "Product not found",
     });
   }
-}); /// hay que arreglar esto de resto todo sirve/// 
+}); 
+routerRealTime.get("/carts/:cid", async (req, res) => {
+  try {
+    const cId = req.params.cid;
+    const cart = await cartManagerMongo.getCartById(cId);
+
+    let totalPrice = 0;
+    for (const product of cart.products) {
+      totalPrice += product.quantity * product.product.price;
+    }
+
+    console.log(totalPrice);
+
+    res.status(200).json({
+      style: "styles.css",
+      products: cart.products.map((product) => ({
+        name: product.product.name,
+        price: product.product.price,
+        quantity: product.quantity,
+      })),
+      totalPrice: totalPrice,
+    });
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({ error: "Error retrieving cart" });
+  }
+});
+
+
+
 
 
   
