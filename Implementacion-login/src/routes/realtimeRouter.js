@@ -2,6 +2,8 @@ import express from "express";
 import {Router} from "express";
 import { ProductManagerMongo } from "../DAO/services/products.service.js";
 import { CartManagerMongo } from "../DAO/services/carts.service.js";
+import { productsModel } from "../DAO/models/products.model.js";
+import { checkAdmin, checkUser } from "../middlewares/auth.js";
 
 
 const productManagerMongo = new ProductManagerMongo ();
@@ -37,6 +39,13 @@ routerRealTime.get("/", async (req, res) => {
 routerRealTime.get("/products", async (req, res) => {
   const allProducts = await productManagerMongo.getProducts(req.query.limit, req.query.page, req.query.sort, req.query.query);
   
+  let sessionDataName = req.session.first_name;
+  let sessionAuth = req.session.admin;
+  if (sessionAuth) {
+    sessionAuth = "Admin";
+  } else {
+    sessionAuth = "User";
+  }
   const products = allProducts.docs.map((product) => ({
     name: product.title,
     description: product.description,
@@ -54,6 +63,10 @@ routerRealTime.get("/products", async (req, res) => {
     hasNextPage: allProducts.hasNextPage,
     prevPage: allProducts.prevPage,
     nextPage: allProducts.nextPage,
+    session: {
+      sessionAuth: sessionAuth,
+      sessionDataName: sessionDataName,
+    },
   });
 });
 
@@ -108,10 +121,6 @@ routerRealTime.get("/carts/:cid", async (req, res) => {
   }
 });
 
-
-
-
-
   
   routerRealTime.get("/realtimeproducts", async (req, res) => {
     res.render("realTimeProducts", {});
@@ -122,4 +131,23 @@ routerRealTime.get("/carts/:cid", async (req, res) => {
     res.render("chat", {});
   });
 
- 
+  routerRealTime.get("/login", async (req, res) => {
+    res.render("login");
+  });
+  
+  routerRealTime.get("/logout", async (req, res) => {
+    req.session.destroy((err) => {
+      if (err) {
+        return res.json({ status: "Logout error", body: err });
+      }
+      res.redirect("/login");
+    });
+  });
+  
+  routerRealTime.get("/register", async (req, res) => {
+    res.render("register");
+  });
+  
+  routerRealTime.get("/profile", checkUser, async (req, res) => {
+    res.render("profile");
+  });

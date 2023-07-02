@@ -1,0 +1,38 @@
+<div>
+  {{#if title}}
+    <h1 class='listTitle'>{{title}}</h1>
+  {{else}}
+    <h1>Unknown Title</h1>
+  {{/if}}
+  <div class='cardList'>
+    {{#each products}}
+      <div class='card'>
+        <h3 class='productTitle'>{{this.name}}</h3>
+        <ul style='list-style: none;'>
+          <li class='productDescription'>{{this.description}}</li>
+          <li class='productPrice'>{{this.price}}$</li>
+        </ul>
+        <div class='addToCart'>
+          <button class='addToCart-btn' data-product-id='{{this._id}}'>Add to cart</button>
+        </div>
+      </div>
+    {{/each}}
+  </div>
+</div>
+<div id='pagination' class='pagination'>
+  {{#if hasPrevPage}}
+    <a href={{prevPage}}><ion-icon name='chevron-back-outline'></ion-icon></a>
+  {{/if}}
+  <select name='pageSelector' id='pageSelect' class='page-select'>
+    {{#each totalPages}}
+      <option value='{{this}}'>{{this}}</option>
+    {{/each}}
+  </select>
+  {{#if hasNextPage}}
+    <a href={{nextPage}}><ion-icon name='chevron-forward-outline'></ion-icon></a>
+  {{/if}}
+</div>
+<script>
+  let currentPage = {{page}};
+</script>
+<script src='/js/viewProducts.js'></script>
