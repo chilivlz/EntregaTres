@@ -54,7 +54,7 @@ routerRealTime.get("/products", async (req, res) => {
   }));
 
   res.render("products",{
-    style: "../css/styles.css",
+    style: "../public/css/styles.css",
     products: products,
     pagingCounter: allProducts.pagingCounter,
     page: allProducts.page,
@@ -78,7 +78,7 @@ routerRealTime.get("/productDetail/:pid", async (req, res) => {
 
   if (product) {
     return res.render("productDetail",{
-      style: "css/styles.css",
+      style:  "../css/styles.css",
       product: {
         name: product.title,
         description: product.description,
@@ -107,7 +107,7 @@ routerRealTime.get("/carts/:cid", async (req, res) => {
     console.log(totalPrice);
 
     res.status(200).render("cartDetail",{
-      style: 'style.css',
+      style: "../css/styles.css",
       products: cart.products.map((product) => ({
         name: product.product.name,
         price: product.product.price,
@@ -117,7 +117,7 @@ routerRealTime.get("/carts/:cid", async (req, res) => {
     });
   } catch (error) {
     console.log(error);
-    res.status(500).json({ error: "Error retrieving cart" });
+    res.status(500).render({ error: "Error retrieving cart" });
   }
 });
 
@@ -127,27 +127,29 @@ routerRealTime.get("/carts/:cid", async (req, res) => {
     res.json({});
   });
   
-  routerRealTime.get("/chat", async (req, res) => {
+routerRealTime.get("/chat", async (req, res) => {
     res.render("chat", {});
   });
 
-  routerRealTime.get("/login", async (req, res) => {
-    res.render("login");
-  });
   
-  routerRealTime.get("/logout", async (req, res) => {
-    req.session.destroy((err) => {
-      if (err) {
-        return res.json({ status: "Logout error", body: err });
-      }
-      res.redirect("/login");
-    });
+ routerRealTime.get("/login", async (req, res) => {
+  res.render("login");
+});
+
+ routerRealTime.get("/logout", async (req, res) => {
+  req.session.destroy((err) => {
+    if (err) {
+      return res.json({ status: "Logout error", body: err });
+    }
+    res.redirect("/login");
   });
+});
+
+ routerRealTime.get("/register", async (req, res) => {
+  res.render("register");
+});
+
+ routerRealTime.get("/profile", checkUser, async (req, res) => {
+  res.render("profile");
+});
   
-  routerRealTime.get("/register", async (req, res) => {
-    res.render("register");
-  });
-  
-  routerRealTime.get("/profile", checkUser, async (req, res) => {
-    res.render("profile");
-  });

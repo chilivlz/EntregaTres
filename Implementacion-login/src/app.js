@@ -33,17 +33,10 @@ app.use(
 );
 
 
-
-
-
-
-
 connectMongo();
 
 const server = http.createServer(app);
 export const io = new Server (server);
-
-
 
 
 app.use(express.urlencoded({ extended: true }));
@@ -94,7 +87,6 @@ app.use("/api/sessions", loginRouter);
 app.get("*", (req, res) => {
   res.status(404).send({ status: "error", data: "Page not found" });
 });
-
 
 
 

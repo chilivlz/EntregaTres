@@ -1,11 +1,12 @@
-<div>
-  {{#if title}}
-    <h1 class='listTitle'>{{title}}</h1>
-  {{else}}
-    <h1>Unknown Title</h1>
-  {{/if}}
+<div class="main">
+  <h1>Welcome {{session.sessionDataName}}, eres un {{session.sessionAuth}}!</h1>
+
+  <a href="/logout" class="logOut">LogOut</a>
+
+  <div class="shop">
+{{#each products}}
   <div class='cardList'>
-    {{#each products}}
+    
       <div class='card'>
         <h3 class='productTitle'>{{this.name}}</h3>
         <ul style='list-style: none;'>
@@ -19,11 +20,11 @@
     {{/each}}
   </div>
 </div>
-<div id='pagination' class='pagination'>
+<div id='pagination' class="botonera">
   {{#if hasPrevPage}}
     <a href={{prevPage}}><ion-icon name='chevron-back-outline'></ion-icon></a>
   {{/if}}
-  <select name='pageSelector' id='pageSelect' class='page-select'>
+  <select name='pageSelector' id='paageSelect' class='page-select'>
     {{#each totalPages}}
       <option value='{{this}}'>{{this}}</option>
     {{/each}}
@@ -32,7 +33,4 @@
     <a href={{nextPage}}><ion-icon name='chevron-forward-outline'></ion-icon></a>
   {{/if}}
 </div>
-<script>
-  let currentPage = {{page}};
-</script>
-<script src='/js/viewProducts.js'></script>
+
