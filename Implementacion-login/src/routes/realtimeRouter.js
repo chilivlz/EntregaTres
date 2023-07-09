@@ -1,27 +1,35 @@
 import express from "express";
-import {Router} from "express";
+import { Router } from "express";
 import { ProductManagerMongo } from "../DAO/services/products.service.js";
 import { CartManagerMongo } from "../DAO/services/carts.service.js";
 import { productsModel } from "../DAO/models/products.model.js";
 import { checkAdmin, checkUser } from "../middlewares/auth.js";
+import { loginRouter } from "./login.router.js";
 
-
-const productManagerMongo = new ProductManagerMongo ();
-const cartManagerMongo = new CartManagerMongo(); 
+const productManagerMongo = new ProductManagerMongo();
+const cartManagerMongo = new CartManagerMongo();
 
 export const routerRealTime = Router();
-
-const app = express();
-app.use(express.static("public"));
-
-
 
 routerRealTime.use(express.json());
 routerRealTime.use(express.urlencoded({ extended: true }));
 
+loginRouter.get("/", async (req, res) => {
+  res.render("login");
+});
+
+//const app = express();
+//app.use(express.static("public"));
+
+
 
 routerRealTime.get("/", async (req, res) => {
-  const allProducts = await productManagerMongo.getProducts(req.query.limit, req.query.page, req.query.sort, req.query.query);
+  const allProducts = await productManagerMongo.getProducts(
+    req.query.limit,
+    req.query.page,
+    req.query.sort,
+    req.query.query
+  );
 
   const products = allProducts.docs.map((product) => ({
     name: product.title,
@@ -29,17 +37,21 @@ routerRealTime.get("/", async (req, res) => {
     price: product.price,
   }));
 
-  return res.render("home",{
+  return res.render("home", {
     style: "../public/css/styles.css",
     products: products,
   });
 });
 
-
 routerRealTime.get("/products", async (req, res) => {
-  const allProducts = await productManagerMongo.getProducts(req.query.limit, req.query.page, req.query.sort, req.query.query);
-  
-  let sessionDataName = req.session.first_name;
+  const allProducts = await productManagerMongo.getProducts(
+    req.query.limit,
+    req.query.page,
+    req.query.sort,
+    req.query.query
+  );
+
+  let sessionDataName = req.session.firstName;
   let sessionAuth = req.session.admin;
   if (sessionAuth) {
     sessionAuth = "Admin";
@@ -53,7 +65,7 @@ routerRealTime.get("/products", async (req, res) => {
     _id: product._id,
   }));
 
-  res.render("products",{
+  res.render("products", {
     style: "../public/css/styles.css",
     products: products,
     pagingCounter: allProducts.pagingCounter,
@@ -70,15 +82,13 @@ routerRealTime.get("/products", async (req, res) => {
   });
 });
 
-
-
 routerRealTime.get("/productDetail/:pid", async (req, res) => {
   let pId = req.params.pid;
   const product = await productManagerMongo.getProductById(pId);
 
   if (product) {
-    return res.render("productDetail",{
-      style:  "../css/styles.css",
+    return res.render("productDetail", {
+      style: "../css/styles.css",
       product: {
         name: product.title,
         description: product.description,
@@ -93,7 +103,7 @@ routerRealTime.get("/productDetail/:pid", async (req, res) => {
       data: "Product not found",
     });
   }
-}); 
+});
 routerRealTime.get("/carts/:cid", async (req, res) => {
   try {
     const cId = req.params.cid;
@@ -106,7 +116,7 @@ routerRealTime.get("/carts/:cid", async (req, res) => {
 
     console.log(totalPrice);
 
-    res.status(200).render("cartDetail",{
+    res.status(200).render("cartDetail", {
       style: "../css/styles.css",
       products: cart.products.map((product) => ({
         name: product.product.name,
@@ -121,22 +131,20 @@ routerRealTime.get("/carts/:cid", async (req, res) => {
   }
 });
 
-  
-  routerRealTime.get("/realtimeproducts", async (req, res) => {
-    res.render("realTimeProducts", {});
-    res.json({});
-  });
-  
-routerRealTime.get("/chat", async (req, res) => {
-    res.render("chat", {});
-  });
+routerRealTime.get("/realtimeproducts", async (req, res) => {
+  res.render("realTimeProducts", {});
+  res.json({});
+});
 
-  
- routerRealTime.get("/login", async (req, res) => {
+routerRealTime.get("/chat", async (req, res) => {
+  res.render("chat", {});
+});
+
+routerRealTime.get("/login", async (req, res) => {
   res.render("login");
 });
 
- routerRealTime.get("/logout", async (req, res) => {
+routerRealTime.get("/logout", async (req, res) => {
   req.session.destroy((err) => {
     if (err) {
       return res.json({ status: "Logout error", body: err });
@@ -145,11 +153,10 @@ routerRealTime.get("/chat", async (req, res) => {
   });
 });
 
- routerRealTime.get("/register", async (req, res) => {
+routerRealTime.get("/register", async (req, res) => {
   res.render("register");
 });
 
- routerRealTime.get("/profile", checkUser, async (req, res) => {
+routerRealTime.get("/profile", checkUser, async (req, res) => {
   res.render("profile");
 });
-  

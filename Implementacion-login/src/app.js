@@ -14,6 +14,9 @@ import { loginRouter } from "./routes/login.router.js";
 import cookieParser from "cookie-parser";
 import session from "express-session";
 import MongoStore from "connect-mongo";
+import { initializePassport } from "./config/passport.config.js";
+import passport from "passport";
+
 const app = express();
 const port = 8080;
 
@@ -68,7 +71,7 @@ socketServer.on("connection", async (socket) => {
   socketServer.sockets.emit("all_msgs", msgs);
 
   socket.on("formSubmission", async (data) => {
-    await productManager.addProduct(data);
+    await productManager.addProduct(data); 
     const products = await productManager.getProducts();
     socketServer.sockets.emit("products", products);
   });
@@ -79,6 +82,12 @@ socketServer.on("connection", async (socket) => {
     socketServer.sockets.emit("all_msgs", msgs);
   });
 });
+
+initializePassport();
+app.use(passport.initialize());
+app.use(passport.session());
+
+
 
 app.use("/api/products", productManagerRouter);
 app.use("/api/carts", cartsRouter);
