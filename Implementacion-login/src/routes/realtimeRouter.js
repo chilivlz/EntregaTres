@@ -51,7 +51,7 @@ routerRealTime.get("/products", async (req, res) => {
     req.query.query
   );
 
-  let sessionDataName = req.session.firstName;
+  let sessionDataName = req.session.user?.firstName;
   let sessionAuth = req.session.admin;
   if (sessionAuth) {
     sessionAuth = "Admin";

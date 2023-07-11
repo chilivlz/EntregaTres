@@ -1,6 +1,7 @@
 import express from "express";
 import passport from "passport";
 
+
 export const loginRouter = express.Router();
 
 
@@ -18,7 +19,7 @@ loginRouter.post(
   passport.authenticate("register", {
     failureRedirect: "api/sessions/failregister",
   }),
-  (req, res) => {
+  async (req, res) => {
     if (!req.user) {
       return res.json({ error: "something went wrong" });
     }
@@ -34,7 +35,7 @@ loginRouter.post(
   }
 );
 
-loginRouter.get("/failregister", (req, res) => {
+loginRouter.get("/failregister", async (req, res) => {
   return res.send({ error: "Fail to register" });
 });
 
@@ -74,6 +75,8 @@ loginRouter.get("logout", (req, res) => {
     return res.redirect("/login");
   });
 });
+
+
 
 loginRouter.get(
   "/github",
