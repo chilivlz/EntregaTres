@@ -4,7 +4,7 @@ import { ProductManagerMongo } from "../DAO/services/products.service.js";
 import { CartManagerMongo } from "../DAO/services/carts.service.js";
 import { productsModel } from "../DAO/models/products.model.js";
 import { checkAdmin, checkUser } from "../middlewares/auth.js";
-import { loginRouter } from "./login.router.js";
+
 
 const productManagerMongo = new ProductManagerMongo();
 const cartManagerMongo = new CartManagerMongo();
@@ -14,7 +14,7 @@ export const routerRealTime = Router();
 routerRealTime.use(express.json());
 routerRealTime.use(express.urlencoded({ extended: true }));
 
-loginRouter.get("/", async (req, res) => {
+routerRealTime.get("/", async (req, res) => {
   res.render("login");
 });
 
@@ -52,7 +52,7 @@ routerRealTime.get("/products", async (req, res) => {
   );
 
   let sessionDataName = req.session.user?.firstName;
-  let sessionAuth = req.session.admin;
+  let sessionAuth = req.session.rol;
   if (sessionAuth) {
     sessionAuth = "Admin";
   } else {

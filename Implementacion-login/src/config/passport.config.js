@@ -38,7 +38,7 @@ export function initializePassport() {
       { passReqToCallback: true, usernameField: "email" },
       async (req, username, password, done) => {
         try {
-          const { email, firstName, lastName } = req.body;
+          const { email, firstName, lastName, age } = req.body;
           let user = await userModel.findOne({ email: username });
           if (user) {
             return done(null, false, { message: "User already exists" });
@@ -48,7 +48,7 @@ export function initializePassport() {
             email,
             firstName,
             lastName,
-            isAdmin: false,
+            age,
             password: createHash(password),
           };
 
@@ -94,8 +94,7 @@ export function initializePassport() {
               email: profile.email,
               firstName: profile._json.name || profile._json.login || "noname",
               lastName: "externalAuth",
-              isAdmin: false,
-              password: "nopass",
+              password: createHash("nopass"),
             };
             let userCreated = await userModel.create(newUser);
             console.log("User Registration succesful");
