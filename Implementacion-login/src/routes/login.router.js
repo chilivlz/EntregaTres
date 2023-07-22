@@ -10,7 +10,6 @@ loginRouter.get("/session", (req, res) => {
 });
 
 
-
 loginRouter.get("/register", (req, res) => {
   return res.render("register", {});
 });

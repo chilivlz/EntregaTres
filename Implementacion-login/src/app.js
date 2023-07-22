@@ -93,7 +93,8 @@ app.use("/api/products", productManagerRouter);
 app.use("/api/carts", cartsRouter);
 app.use("/api/sessions", loginRouter);
 
-app.use("/api/sessions/current", (req,res)=>{     
+app.use("/api/sessions/current", (req,res)=>{   
+  console.log(req.session.user)  
   return res.status(200).json({
     status: "sucess",
     msg: "User data session",
